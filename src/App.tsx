@@ -14,17 +14,17 @@ const works: VideoWork[] = [
   {
     title: "iiisAndmaniii Short Form Reel",
     url: "https://www.youtube.com/shorts/s97VTmWW8uU",
-    type: 'shortform' // ✅ fixed to match union
+    type: 'shortform'
   },
   {
     title: "Skiourakic Bingo Challenge",
     url: "https://www.youtube.com/watch?v=oVif9j-DyrQ",
-    type: 'longform' // ✅ fixed to match union
+    type: 'longform'
   },
   {
     title: "Preview for @/FortniteCompetitive (Seryx Style Practice)",
     url: "https://youtu.be/watch?v=4EUAtuRWlPk",
-    type: 'highlight' // ✅ fixed to match union
+    type: 'highlight'
   }
 ];
 
@@ -86,47 +86,73 @@ const experienceWorks = {
 
 /* =========================
    Cookie popup (overlay + animation)
-   - Shows once using localStorage
+   - Saves to localStorage + cookie
    - Bottom-right
    - Pop-in + pop-out
 ========================= */
 const CookieBanner = ({ isDarkMode }: { isDarkMode: boolean }) => {
-  const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [entered, setEntered] = useState(false);
   const [closing, setClosing] = useState(false);
 
+  const hasAccepted = () => {
+    try {
+      if (localStorage.getItem('cookiesAccepted') === 'true') return true;
+    } catch {}
+    if (typeof document !== 'undefined') {
+      return document.cookie.split('; ').some(c => c.startsWith('dv_cookies_accepted=true'));
+    }
+    return false;
+  };
+
+  const saveAccepted = () => {
+    try {
+      localStorage.setItem('cookiesAccepted', 'true');
+    } catch {}
+    if (typeof document !== 'undefined') {
+      document.cookie = 'dv_cookies_accepted=true; max-age=31536000; path=/; SameSite=Lax';
+    }
+  };
+
   useEffect(() => {
-    setMounted(true);
-    const accepted = localStorage.getItem('cookiesAccepted');
-    if (!accepted) setVisible(true);
+    if (hasAccepted()) return;
+
+    setVisible(true);
+
+    // trigger pop-in animation on next frame
+    const raf = requestAnimationFrame(() => setEntered(true));
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const accept = () => {
     setClosing(true);
+    setEntered(false);
+
     setTimeout(() => {
-      localStorage.setItem('cookiesAccepted', 'true');
+      saveAccepted();
       setVisible(false);
     }, 260);
   };
 
-  if (!mounted || !visible) return null;
+  if (!visible) return null;
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] pointer-events-none">
       <div className="pointer-events-auto fixed right-6 bottom-6 w-[calc(100%-3rem)] sm:w-[380px]">
         <div
-          className={`p-4 rounded-xl shadow-xl backdrop-blur-md border transition-all duration-300 ease-out
-            ${
-              isDarkMode
-                ? 'bg-gray-800/95 text-gray-200 border-gray-700'
-                : 'bg-white/95 text-gray-800 border-gray-200'
-            }
-            ${
-              closing
-                ? 'opacity-0 scale-95 translate-y-3'
-                : 'opacity-100 scale-100 translate-y-0'
-            }
-          `}
+          className={[
+            "p-4 rounded-xl shadow-xl backdrop-blur-md border",
+            "transition-all duration-300 ease-out",
+            isDarkMode
+              ? "bg-gray-800/95 text-gray-200 border-gray-700"
+              : "bg-white/95 text-gray-800 border-gray-200",
+            closing
+              ? "opacity-0 scale-95 translate-y-3"
+              : entered
+                ? "opacity-100 scale-100 translate-y-0"
+                : "opacity-0 scale-95 translate-y-2",
+          ].join(" ")}
         >
           <p className="text-sm mb-3">
             This website uses cookies to improve your experience.
@@ -169,16 +195,13 @@ function App() {
 
   const Header = () => (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isDarkMode
-        ? 'bg-gray-900/95 border-gray-800'
+      isDarkMode 
+        ? 'bg-gray-900/95 border-gray-800' 
         : 'bg-white/95 border-gray-200'
     } backdrop-blur-md border-b`}>
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <div
-            onClick={() => setCurrentPage('home')}
-            className="cursor-pointer text-2xl font-bold bg-gradient-to-r from-blue-500 to-teal-500 bg-clip-text text-transparent hover:opacity-80 transition-opacity"
-          >
+          <div onClick={() => setCurrentPage('home')} className="cursor-pointer text-2xl font-bold bg-gradient-to-r from-blue-500 to-teal-500 bg-clip-text text-transparent hover:opacity-80 transition-opacity">
             DoubleVisuals
           </div>
 
@@ -262,8 +285,8 @@ function App() {
 
   const Footer = () => (
     <footer className={`border-t transition-all duration-300 ${
-      isDarkMode
-        ? 'bg-gray-900 border-gray-800 text-gray-300'
+      isDarkMode 
+        ? 'bg-gray-900 border-gray-800 text-gray-300' 
         : 'bg-white border-gray-200 text-gray-600'
     }`}>
       <div className="max-w-7xl mx-auto px-6 py-12">
@@ -289,8 +312,8 @@ function App() {
                   key={item.id}
                   onClick={() => setCurrentPage(item.id)}
                   className={`block text-sm transition-colors duration-200 ${
-                    isDarkMode
-                      ? 'text-gray-400 hover:text-white'
+                    isDarkMode 
+                      ? 'text-gray-400 hover:text-white' 
                       : 'text-gray-500 hover:text-gray-900'
                   }`}
                 >
@@ -333,8 +356,8 @@ function App() {
         </div>
 
         <div className={`mt-8 pt-8 border-t text-center text-sm ${
-          isDarkMode
-            ? 'border-gray-800 text-gray-400'
+          isDarkMode 
+            ? 'border-gray-800 text-gray-400' 
             : 'border-gray-200 text-gray-500'
         }`}>
           Copyright Double© All rights reserved.
@@ -347,8 +370,8 @@ function App() {
     if (!url) {
       return (
         <div className={`aspect-video rounded-xl border-2 border-dashed flex items-center justify-center ${
-          isDarkMode
-            ? 'border-gray-700 bg-gray-800 text-gray-400'
+          isDarkMode 
+            ? 'border-gray-700 bg-gray-800 text-gray-400' 
             : 'border-gray-300 bg-gray-100 text-gray-500'
         } ${className}`}>
           <div className="text-center">
@@ -360,12 +383,12 @@ function App() {
     }
 
     if (url.includes('youtube.com') || url.includes('youtu.be')) {
-      const videoId = url.includes('youtu.be')
+      const videoId = url.includes('youtu.be') 
         ? url.split('youtu.be/')[1]?.split('?')[0]
         : url.includes('youtube.com/shorts/')
           ? url.split('shorts/')[1]?.split('?')[0]
           : url.split('v=')[1]?.split('&')[0];
-
+      
       return (
         <div className={`aspect-video rounded-xl overflow-hidden shadow-lg ${className}`}>
           <iframe
@@ -385,9 +408,9 @@ function App() {
           <div className="text-center text-white">
             <Play className="w-12 h-12 mx-auto mb-2" />
             <p className="font-medium mb-2">{title}</p>
-            <a
-              href={url}
-              target="_blank"
+            <a 
+              href={url} 
+              target="_blank" 
               rel="noopener noreferrer"
               className="text-blue-400 hover:text-blue-300 text-sm underline"
             >
@@ -452,9 +475,9 @@ function App() {
           <p className={`text-lg leading-relaxed ${
             isDarkMode ? 'text-gray-300' : 'text-gray-700'
           }`}>
-            Meet Double, a passionate teen editor with years of experience crafting stunning visuals.
-            Specializing in affordable, high-quality video editing services, Double is available for
-            both short-term quick projects and long-term collaborations. Every project is handled
+            Meet Double, a passionate teen editor with years of experience crafting stunning visuals. 
+            Specializing in affordable, high-quality video editing services, Double is available for 
+            both short-term quick projects and long-term collaborations. Every project is handled 
             with dedication and creativity to bring your vision to life.
           </p>
         </div>
@@ -478,37 +501,37 @@ function App() {
         }`}>
           About Me
         </h1>
-
+        
         <div className={`prose prose-lg max-w-none p-8 rounded-2xl ${
-          isDarkMode
-            ? 'bg-gray-800 text-gray-300 prose-headings:text-white prose-strong:text-white'
+          isDarkMode 
+            ? 'bg-gray-800 text-gray-300 prose-headings:text-white prose-strong:text-white' 
             : 'bg-gray-50 text-gray-700 prose-headings:text-gray-900'
         }`}>
           <p className="text-xl leading-relaxed mb-6">
-            Hi, I'm Double, a passionate teenage video editor who lives and breathes visual storytelling.
-            What started as a hobby quickly evolved into a genuine expertise in transforming raw footage
+            Hi, I'm Double, a passionate teenage video editor who lives and breathes visual storytelling. 
+            What started as a hobby quickly evolved into a genuine expertise in transforming raw footage 
             into compelling narratives that captivate audiences.
           </p>
-
+          
           <p className="text-lg leading-relaxed mb-6">
-            My journey in video editing began years ago, and since then, I've honed my skills across
-            multiple formats, from punchy shortform content that grabs attention in seconds, to
-            cinematic longform pieces that tell complete stories, to high-energy gaming highlights
+            My journey in video editing began years ago, and since then, I've honed my skills across 
+            multiple formats, from punchy shortform content that grabs attention in seconds, to 
+            cinematic longform pieces that tell complete stories, to high-energy gaming highlights 
             that showcase the best moments.
           </p>
-
+          
           <p className="text-lg leading-relaxed mb-6">
-            What sets me apart is my commitment to making professional-quality editing accessible.
-            I believe that great visual content shouldn't break the bank, which is why I offer
-            competitive rates without compromising on quality. Whether you need a quick turnaround
-            for a single project or want to establish a long-term creative partnership, I'm here
+            What sets me apart is my commitment to making professional-quality editing accessible. 
+            I believe that great visual content shouldn't break the bank, which is why I offer 
+            competitive rates without compromising on quality. Whether you need a quick turnaround 
+            for a single project or want to establish a long-term creative partnership, I'm here 
             to help bring your vision to life.
           </p>
-
+          
           <p className="text-lg leading-relaxed">
-            Every project I take on receives the same level of dedication and creative attention.
-            I don't just edit videos, I craft experiences that resonate with your audience and
-            elevate your content above the noise. Let's work together to turn your ideas into
+            Every project I take on receives the same level of dedication and creative attention. 
+            I don't just edit videos, I craft experiences that resonate with your audience and 
+            elevate your content above the noise. Let's work together to turn your ideas into 
             stunning visual reality.
           </p>
         </div>
@@ -615,8 +638,8 @@ function App() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           {/* Twitter Card */}
           <div className={`p-8 rounded-2xl bg-gradient-to-br transition-all duration-300 hover:scale-105 ${
-            isDarkMode
-              ? 'from-blue-900 to-gray-900 border border-blue-800'
+            isDarkMode 
+              ? 'from-blue-900 to-gray-900 border border-blue-800' 
               : 'from-blue-50 to-white border border-blue-200'
           }`}>
             <Twitter className={`w-12 h-12 mx-auto mb-4 ${
@@ -627,13 +650,13 @@ function App() {
             }`}>
               Twitter
             </h3>
-            <a
-              href="https://twitter.com/VisualsByDouble"
-              target="_blank"
+            <a 
+              href="https://twitter.com/VisualsByDouble" 
+              target="_blank" 
               rel="noopener noreferrer"
               className={`text-lg font-medium transition-colors duration-200 ${
-                isDarkMode
-                  ? 'text-blue-400 hover:text-blue-300'
+                isDarkMode 
+                  ? 'text-blue-400 hover:text-blue-300' 
                   : 'text-blue-600 hover:text-blue-700'
               }`}
             >
@@ -643,8 +666,8 @@ function App() {
 
           {/* Email Card */}
           <div className={`p-8 rounded-2xl bg-gradient-to-br transition-all duration-300 hover:scale-105 ${
-            isDarkMode
-              ? 'from-teal-900 to-gray-900 border border-teal-800'
+            isDarkMode 
+              ? 'from-teal-900 to-gray-900 border border-teal-800' 
               : 'from-teal-50 to-white border border-teal-200'
           }`}>
             <Mail className={`w-12 h-12 mx-auto mb-4 ${
@@ -655,11 +678,11 @@ function App() {
             }`}>
               Email
             </h3>
-            <a
+            <a 
               href="mailto:doublemanagementgr@gmail.com"
               className={`text-lg font-medium transition-colors duration-200 ${
-                isDarkMode
-                  ? 'text-teal-400 hover:text-teal-300'
+                isDarkMode 
+                  ? 'text-teal-400 hover:text-teal-300' 
                   : 'text-teal-600 hover:text-teal-700'
               }`}
             >
@@ -704,7 +727,7 @@ function App() {
         {renderPage()}
       </main>
 
-      {/* ✅ cookie popup overlay */}
+      {/* ✅ cookie popup overlay + animation */}
       <CookieBanner isDarkMode={isDarkMode} />
 
       <Footer />
