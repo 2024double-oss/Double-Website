@@ -30,6 +30,53 @@ const getCookie = (name: string) => {
 ========================= */
 const CookieBanner = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const [visible, setVisible] = useState(false);
+  const [closing, setClosing] = useState(false);
+
+  useEffect(() => {
+    const accepted = getCookie('dv_cookies_accepted');
+    if (accepted !== 'true') setVisible(true);
+  }, []);
+
+  const accept = () => {
+    setClosing(true);
+    setTimeout(() => {
+      setCookie('dv_cookies_accepted', 'true', 365);
+      setVisible(false);
+    }, 250); // match animation duration
+  };
+
+  if (!visible) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-end justify-center p-4 pointer-events-none">
+      <div
+        className={`pointer-events-auto w-full md:max-w-md p-4 rounded-xl shadow-lg backdrop-blur-md border
+        transition-all duration-300 ease-out
+        ${
+          closing
+            ? 'opacity-0 translate-y-8'
+            : 'opacity-100 translate-y-0'
+        }
+        ${
+          isDarkMode
+            ? 'bg-gray-800/95 text-gray-200 border-gray-700'
+            : 'bg-white/95 text-gray-800 border-gray-200'
+        }`}
+      >
+        <p className="text-sm mb-3">
+          This website uses cookies to improve your experience.
+        </p>
+        <button
+          onClick={accept}
+          className="w-full bg-gradient-to-r from-blue-500 to-teal-500 text-white py-2 rounded-lg font-medium hover:opacity-90 transition"
+        >
+          Accept
+        </button>
+      </div>
+    </div>,
+    document.body
+  );
+};
 
   useEffect(() => {
     const accepted = getCookie('dv_cookies_accepted');
