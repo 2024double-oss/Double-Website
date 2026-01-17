@@ -25,17 +25,80 @@ const getCookie = (name: string) => {
   return match ? decodeURIComponent(match.split('=')[1]) : null;
 };
 
-/* =========================
-   Cookie Banner (overlay)
-   - Uses a cookie
-   - Uses a portal so it truly overlays (not stuck at page bottom)
-========================= */
 const CookieBanner = ({ isDarkMode }: { isDarkMode: boolean }) => {
+  const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [enter, setEnter] = useState(false);
   const [closing, setClosing] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
+  const [drift, setDrift] = useState(0);
 
+  useEffect(() => {
+    setMounted(true);
+
+    const accepted = localStorage.getItem('cookiesAccepted');
+    if (!accepted) {
+      setVisible(true);
+      // start “pop in” animation on next frame
+      requestAnimationFrame(() => setClosing(false));
+    }
+
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        // drift down a bit as you scroll (overlay illusion)
+        const y = Math.min(window.scrollY * 0.06, 80);
+        setDrift(y);
+      });
+    };
+
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, []);
+
+  const accept = () => {
+    setClosing(true);
+    setTimeout(() => {
+      localStorage.setItem('cookiesAccepted', 'true');
+      setVisible(false);
+    }, 260);
+  };
+
+  if (!mounted || !visible) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] pointer-events-none">
+      <div
+        className="pointer-events-auto fixed right-6 bottom-6 w-[calc(100%-3rem)] sm:w-[380px]"
+        style={{
+          transform: `translateY(${drift}px)`,
+        }}
+      >
+        <div
+          className={`p-4 rounded-xl shadow-xl backdrop-blur-md border transition-all duration-300 ease-out
+            ${isDarkMode ? 'bg-gray-800/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-800 border-gray-200'}
+            ${closing ? 'opacity-0 scale-95 translate-y-3' : 'opacity-100 scale-100 translate-y-0'}
+          `}
+        >
+          <p className="text-sm text-sm mb-3">
+            This website uses cookies to improve your experience.
+          </p>
+
+          <button
+            onClick={accept}
+            className="w-full bg-gradient-to-r from-blue-500 to-teal-500 text-white py-2 rounded-lg font-medium hover:opacity-90 transition"
+          >
+            Accept
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+};
   // Show once
   useEffect(() => {
     const accepted = localStorage.getItem('cookiesAccepted');
