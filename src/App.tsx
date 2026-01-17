@@ -31,21 +31,22 @@ const experienceWorks = {
   shortform: [
     {
       title: "ThriveEsports - Loadout Video",
-      url: "https://www.youtube.com/shorts/hXNxZlzDl7c",
       embed: "https://www.youtube.com/shorts/hXNxZlzDl7c"
+    },
+    {
+      title: "iiisAndmaniii Short Form Reel",
+      embed: "https://www.youtube.com/shorts/s97VTmWW8uU"
     }
   ],
   longform: [
     {
       title: "Skiourakic Bingo Challenge",
-      url: "https://www.youtube.com/watch?v=oVif9j-DyrQ",
       embed: "https://www.youtube.com/watch?v=oVif9j-DyrQ"
     }
   ],
   highlights: [
     {
       title: "Preview for @/FortniteCompetitive",
-      url: "https://youtu.be/4EUAtuRWlPk",
       embed: "https://youtu.be/4EUAtuRWlPk"
     }
   ]
@@ -99,22 +100,26 @@ function App() {
 
   const Header = () => (
     <header className={`fixed top-0 left-0 right-0 z-50 ${
-      isDarkMode ? 'bg-gray-900' : 'bg-white'
+      isDarkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'
     } border-b`}>
-      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between">
-        <div className="text-2xl font-bold text-blue-500 cursor-pointer">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div
+          onClick={() => setCurrentPage('home')}
+          className="cursor-pointer text-2xl font-bold bg-gradient-to-r from-blue-500 to-teal-500 bg-clip-text text-transparent"
+        >
           DoubleVisuals
         </div>
+
+        <button
+          onClick={() => setIsDarkMode(!isDarkMode)}
+          className={`p-2 rounded-lg ${
+            isDarkMode ? 'bg-gray-800 text-yellow-400' : 'bg-gray-100 text-gray-600'
+          }`}
+        >
+          {isDarkMode ? <Sun /> : <Moon />}
+        </button>
       </div>
     </header>
-  );
-
-  const Footer = () => (
-    <footer className={`border-t ${
-      isDarkMode ? 'bg-gray-900 text-gray-400' : 'bg-white text-gray-600'
-    } p-6 text-center`}>
-      © DoubleVisuals
-    </footer>
   );
 
   const VideoEmbed = ({ url, title }: { url: string; title: string }) => {
@@ -135,28 +140,36 @@ function App() {
   };
 
   const HomePage = () => (
-    <div className="pt-24 px-6 max-w-7xl mx-auto">
-      <div className="grid md:grid-cols-3 gap-8">
-        {works.map((work, i) => (
-          <div key={i} className="rounded-xl bg-gray-100 p-4">
-            <VideoEmbed url={work.url} title={work.title} />
-            <h3 className="mt-2 font-semibold">{work.title}</h3>
-            <p className="text-sm capitalize text-gray-500">{work.type}</p>
-          </div>
-        ))}
-      </div>
+    <div className="pt-24 max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8">
+      {works.map((work, i) => (
+        <div
+          key={i}
+          className={`rounded-xl p-4 ${
+            isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-900'
+          }`}
+        >
+          <VideoEmbed url={work.url} title={work.title} />
+          <h3 className="mt-2 font-semibold">{work.title}</h3>
+          <p className="text-sm opacity-70 capitalize">{work.type}</p>
+        </div>
+      ))}
     </div>
   );
 
   return (
-    <div className={isDarkMode ? 'bg-gray-900 min-h-screen' : 'bg-white min-h-screen'}>
+    <div className={`${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'} min-h-screen`}>
       <Header />
-      <HomePage />
 
-      {/* COOKIE BANNER */}
+      <main>
+        <HomePage />
+      </main>
+
+      {/* COOKIE POPUP */}
       <CookieBanner isDarkMode={isDarkMode} />
 
-      <Footer />
+      <footer className="text-center py-6 text-sm opacity-60">
+        © DoubleVisuals
+      </footer>
     </div>
   );
 }
