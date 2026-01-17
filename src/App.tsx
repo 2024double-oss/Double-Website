@@ -68,19 +68,19 @@ const experienceWorks = {
   ],
   highlights: [
     {
+      title: "Preview for @/FortniteCompetitive (Seryx Style Practice)",
+      url: "https://www.tiktok.com/@double_vfx/video/7593239009996836118",
+      embed: "https://www.tiktok.com/@double_vfx/video/7593239009996836118"
+    },
+    {
+      title: "Preview for @/FortniteCompetitive (Old-Zerox Style Practice)",
+      url: "https://www.tiktok.com/@double_vfx/video/7562178635965156630",
+      embed: "https://www.tiktok.com/@double_vfx/video/7562178635965156630"        
+    },
+    {
       title: "Preview for @scoutfnr / @FruityINC (Seryx Style)",
       url: "https://x.com/VisualsByDouble/status/1912659231485964470",
       embed: "https://x.com/VisualsByDouble/status/1912659231485964470"
-    },
-    {
-      title: "Preview for @Zeroxakos (Seryx Style)",
-      url: "https://x.com/VisualsByDouble/status/1911037832413536746",
-      embed: "https://x.com/VisualsByDouble/status/1911037832413536746"
-    },
-    {
-      title: "Preview for @SNMeSportsggs / @VaxotiaFN",
-      url: "https://x.com/VisualsByDouble/status/1901332637161275776",
-      embed: "https://x.com/VisualsByDouble/status/1901332637161275776"
     }
   ]
 };
