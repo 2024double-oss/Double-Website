@@ -90,43 +90,103 @@ const experienceWorks = {
 const CookieBanner = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const [visible, setVisible] = useState(false);
   const [phase, setPhase] = useState<'hidden' | 'enter' | 'shown' | 'exit'>('hidden');
+  const [audioUnlocked, setAudioUnlocked] = useState(false);
 
   const DELAY_MS = 900;
   const ANIM_MS = 280;
 
+  const LS_KEY = 'dv_cookies_accepted';
+  const COOKIE_KEY = 'dv_cookies_accepted';
+
   const hasAccepted = () => {
     try {
-      if (localStorage.getItem('cookiesAccepted') === 'true') return true;
+      if (localStorage.getItem(LS_KEY) === 'true') return true;
     } catch {}
     if (typeof document !== 'undefined') {
-      return document.cookie.includes('dv_cookies_accepted=true');
+      return document.cookie.split('; ').some((c) => c.startsWith(`${COOKIE_KEY}=true`));
     }
     return false;
   };
 
   const saveAccepted = () => {
     try {
-      localStorage.setItem('cookiesAccepted', 'true');
+      localStorage.setItem(LS_KEY, 'true');
     } catch {}
     if (typeof document !== 'undefined') {
-      document.cookie = 'dv_cookies_accepted=true; max-age=31536000; path=/; SameSite=Lax';
+      document.cookie = `${COOKIE_KEY}=true; max-age=31536000; path=/; SameSite=Lax`;
     }
   };
+
+  // --- SOUND (WebAudio beep) ---
+  const playPopSound = () => {
+    try {
+      const AudioCtx = (window.AudioContext || (window as any).webkitAudioContext);
+      if (!AudioCtx) return;
+
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.value = 660; // pleasant "pop" pitch
+
+      // quick pop envelope
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.12);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start();
+      osc.stop(ctx.currentTime + 0.14);
+
+      osc.onended = () => {
+        try { ctx.close(); } catch {}
+      };
+    } catch {
+      // ignore audio errors
+    }
+  };
+
+  // Unlock audio on first user interaction (so sound can play reliably)
+  useEffect(() => {
+    const unlock = () => {
+      setAudioUnlocked(true);
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('keydown', unlock);
+    };
+    window.addEventListener('pointerdown', unlock, { once: true });
+    window.addEventListener('keydown', unlock, { once: true });
+    return () => {
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('keydown', unlock);
+    };
+  }, []);
 
   useEffect(() => {
     if (hasAccepted()) return;
 
     const t = window.setTimeout(() => {
       setVisible(true);
-      // start from hidden, then pop in next frame
       requestAnimationFrame(() => setPhase('enter'));
-      // settle into "shown" after animation
       window.setTimeout(() => setPhase('shown'), ANIM_MS);
+
+      // play sound when popup appears (works after first interaction; otherwise it may be blocked)
+      if (audioUnlocked) playPopSound();
     }, DELAY_MS);
 
     return () => window.clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [audioUnlocked]);
+
+  // If popup is already visible and audio becomes unlocked (first click), play once
+  useEffect(() => {
+    if (visible && audioUnlocked && (phase === 'enter' || phase === 'shown')) {
+      playPopSound();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audioUnlocked]);
 
   const accept = () => {
     setPhase('exit');
@@ -139,16 +199,16 @@ const CookieBanner = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
   if (!visible) return null;
 
-  // ✅ Inline styles so color ALWAYS updates with dark mode
+  // ✅ Inline theme styles so color ALWAYS updates with isDarkMode
   const panelStyle: React.CSSProperties = isDarkMode
     ? {
-        backgroundColor: 'rgba(31, 41, 55, 0.95)', // gray-800-ish
-        color: 'rgba(229, 231, 235, 1)', // gray-200-ish
-        borderColor: 'rgba(55, 65, 81, 1)', // gray-700-ish
+        backgroundColor: 'rgba(31, 41, 55, 0.95)',
+        color: 'rgba(229, 231, 235, 1)',
+        borderColor: 'rgba(55, 65, 81, 1)',
       }
     : {
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        color: 'rgba(31, 41, 55, 1)',
+        color: 'rgba(17, 24, 39, 1)',
         borderColor: 'rgba(229, 231, 235, 1)',
       };
 
