@@ -14,11 +14,13 @@ interface VideoWork {
    Cookie helpers (same file)
 ========================= */
 const setCookie = (name: string, value: string, days = 365) => {
+  if (typeof document === 'undefined') return; // ✅ SSR-safe
   const expires = new Date(Date.now() + days * 864e5).toUTCString();
   document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
 };
 
 const getCookie = (name: string) => {
+  if (typeof document === 'undefined') return null; // ✅ SSR-safe
   const match = document.cookie.split('; ').find(r => r.startsWith(name + '='));
   return match ? decodeURIComponent(match.split('=')[1]) : null;
 };
@@ -29,8 +31,52 @@ const getCookie = (name: string) => {
    - Uses a portal so it truly overlays (not stuck at page bottom)
 ========================= */
 const CookieBanner = ({ isDarkMode }: { isDarkMode: boolean }) => {
+  const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [closing, setClosing] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const accepted = getCookie('dv_cookies_accepted');
+    if (accepted !== 'true') setVisible(true);
+  }, []);
+
+  const accept = () => {
+    setClosing(true);
+    setTimeout(() => {
+      setCookie('dv_cookies_accepted', 'true', 365);
+      setVisible(false);
+    }, 250);
+  };
+
+  if (!mounted || !visible || typeof document === 'undefined') return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-end justify-center p-4 pointer-events-none">
+      <div
+        className={`pointer-events-auto w-full md:max-w-md p-4 rounded-xl shadow-lg backdrop-blur-md border
+        transition-all duration-300 ease-out
+        ${closing ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}
+        ${
+          isDarkMode
+            ? 'bg-gray-800/95 text-gray-200 border-gray-700'
+            : 'bg-white/95 text-gray-800 border-gray-200'
+        }`}
+      >
+        <p className="text-sm mb-3">
+          This website uses cookies to improve your experience.
+        </p>
+        <button
+          onClick={accept}
+          className="w-full bg-gradient-to-r from-blue-500 to-teal-500 text-white py-2 rounded-lg font-medium hover:opacity-90 transition"
+        >
+          Accept
+        </button>
+      </div>
+    </div>,
+    document.body
+  );
+};
 
   useEffect(() => {
     const accepted = getCookie('dv_cookies_accepted');
@@ -192,7 +238,12 @@ function App() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
 
   // ✅ Dark mode loads from cookie
-  const [isDarkMode, setIsDarkMode] = useState(() => getCookie('dv_theme') === 'dark');
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+useEffect(() => {
+  setIsDarkMode(getCookie('dv_theme') === 'dark');
+}, []);
+
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
