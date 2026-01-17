@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Sun, Moon, Menu, X, Play, Mail, Twitter } from 'lucide-react';
 
@@ -69,7 +69,7 @@ const experienceWorks = {
     {
       title: "Preview for @/FortniteCompetitive (Seryx Style Practice)",
       url: "https://youtu.be/watch?v=4EUAtuRWlPk",
-      embed: "https://youtu.be/watch?v=4EUAtuRWlPk"
+      embed: "https://youtu.be/4EUAtuRWlPk"
     },
     {
       title: "Preview for @/FortniteCompetitive (Old-Zerox Style Practice)",
@@ -85,18 +85,148 @@ const experienceWorks = {
 };
 
 /* =========================
-   COOKIE BANNER (overlay + delay + pop-in/out + color updates)
+   Per-user accent (unique per device/user)
 ========================= */
-const CookieBanner = ({ isDarkMode }: { isDarkMode: boolean }) => {
+function getOrCreateUserHue(): number {
+  const KEY = 'dv_user_hue';
+  try {
+    const existing = localStorage.getItem(KEY);
+    if (existing) {
+      const n = Number(existing);
+      if (!Number.isNaN(n)) return n;
+    }
+    const hue = Math.floor(Math.random() * 360);
+    localStorage.setItem(KEY, String(hue));
+    return hue;
+  } catch {
+    // fallback if storage blocked
+    return 200;
+  }
+}
+
+function hsl(h: number, s: number, l: number) {
+  return `hsl(${h} ${s}% ${l}%)`;
+}
+
+/* =========================
+   Simple UI sound (WebAudio)
+   - Hover + Click sounds
+   - Unlocks after first user interaction
+========================= */
+function useUISound() {
+  const unlockedRef = useRef(false);
+
+  useEffect(() => {
+    const unlock = () => {
+      unlockedRef.current = true;
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('keydown', unlock);
+    };
+    window.addEventListener('pointerdown', unlock, { once: true });
+    window.addEventListener('keydown', unlock, { once: true });
+    return () => {
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('keydown', unlock);
+    };
+  }, []);
+
+  const playTone = (freq: number, durMs: number, gainPeak = 0.12) => {
+    try {
+      const AudioCtx = (window.AudioContext || (window as any).webkitAudioContext);
+      if (!AudioCtx) return;
+      if (!unlockedRef.current) return;
+
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+
+      const t0 = ctx.currentTime;
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(gainPeak, t0 + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + durMs / 1000);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start();
+      osc.stop(t0 + durMs / 1000 + 0.02);
+
+      osc.onended = () => {
+        try { ctx.close(); } catch {}
+      };
+    } catch {
+      // ignore
+    }
+  };
+
+  return {
+    hover: () => playTone(880, 60, 0.06),
+    click: () => playTone(660, 140, 0.12),
+    pop: (freq = 660) => playTone(freq, 140, 0.12),
+  };
+}
+
+/* =========================
+   COOKIE BANNER
+   - Fixes “shows twice” (StrictMode)
+   - Different message + sound per tab
+   - Colors always correct on theme toggle
+   - Per-user accent color
+========================= */
+const CookieBanner = ({
+  isDarkMode,
+  currentPage,
+  userHue,
+}: {
+  isDarkMode: boolean;
+  currentPage: Page;
+  userHue: number;
+}) => {
   const [visible, setVisible] = useState(false);
-  const [phase, setPhase] = useState<'hidden' | 'enter' | 'shown' | 'exit'>('hidden');
-  const [audioUnlocked, setAudioUnlocked] = useState(false);
+  const [entered, setEntered] = useState(false);
+  const [closing, setClosing] = useState(false);
+
+  const startedRef = useRef(false); // ✅ prevents double-run in StrictMode
+  const { pop } = useUISound();
 
   const DELAY_MS = 900;
   const ANIM_MS = 280;
 
   const LS_KEY = 'dv_cookies_accepted';
   const COOKIE_KEY = 'dv_cookies_accepted';
+
+  const tabCopy = useMemo(() => {
+    switch (currentPage) {
+      case 'home':
+        return "This site uses cookies to improve your experience.";
+      case 'about':
+        return "Cookies help remember your preferences while you browse.";
+      case 'experience':
+        return "Cookies help load your work previews faster next time.";
+      case 'contact':
+        return "Cookies help keep the site smooth while you contact me.";
+      default:
+        return "This site uses cookies to improve your experience.";
+    }
+  }, [currentPage]);
+
+  const tabPopFreq = useMemo(() => {
+    switch (currentPage) {
+      case 'home':
+        return 660;
+      case 'about':
+        return 740;
+      case 'experience':
+        return 520;
+      case 'contact':
+        return 600;
+      default:
+        return 660;
+    }
+  }, [currentPage]);
 
   const hasAccepted = () => {
     try {
@@ -117,129 +247,70 @@ const CookieBanner = ({ isDarkMode }: { isDarkMode: boolean }) => {
     }
   };
 
-  // --- SOUND (WebAudio beep) ---
-  const playPopSound = () => {
-    try {
-      const AudioCtx = (window.AudioContext || (window as any).webkitAudioContext);
-      if (!AudioCtx) return;
-
-      const ctx = new AudioCtx();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.value = 660; // pleasant "pop" pitch
-
-      // quick pop envelope
-      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 0.01);
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.12);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-
-      osc.start();
-      osc.stop(ctx.currentTime + 0.14);
-
-      osc.onended = () => {
-        try { ctx.close(); } catch {}
-      };
-    } catch {
-      // ignore audio errors
-    }
-  };
-
-  // Unlock audio on first user interaction (so sound can play reliably)
   useEffect(() => {
-    const unlock = () => {
-      setAudioUnlocked(true);
-      window.removeEventListener('pointerdown', unlock);
-      window.removeEventListener('keydown', unlock);
-    };
-    window.addEventListener('pointerdown', unlock, { once: true });
-    window.addEventListener('keydown', unlock, { once: true });
-    return () => {
-      window.removeEventListener('pointerdown', unlock);
-      window.removeEventListener('keydown', unlock);
-    };
-  }, []);
+    // ✅ stop duplicate timers in StrictMode
+    if (startedRef.current) return;
+    startedRef.current = true;
 
-  useEffect(() => {
     if (hasAccepted()) return;
 
     const t = window.setTimeout(() => {
       setVisible(true);
-      requestAnimationFrame(() => setPhase('enter'));
-      window.setTimeout(() => setPhase('shown'), ANIM_MS);
-
-      // play sound when popup appears (works after first interaction; otherwise it may be blocked)
-      if (audioUnlocked) playPopSound();
+      requestAnimationFrame(() => setEntered(true));
+      pop(tabPopFreq); // ✅ pop sound on show (different per tab)
     }, DELAY_MS);
 
     return () => window.clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [audioUnlocked]);
-
-  // If popup is already visible and audio becomes unlocked (first click), play once
-  useEffect(() => {
-    if (visible && audioUnlocked && (phase === 'enter' || phase === 'shown')) {
-      playPopSound();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [audioUnlocked]);
+  }, [tabPopFreq]);
 
   const accept = () => {
-    setPhase('exit');
+    setClosing(true);
+    setEntered(false);
+
     window.setTimeout(() => {
       saveAccepted();
       setVisible(false);
-      setPhase('hidden');
     }, ANIM_MS);
   };
 
   if (!visible) return null;
 
-  // ✅ Inline theme styles so color ALWAYS updates with isDarkMode
-  const panelStyle: React.CSSProperties = isDarkMode
-    ? {
-        backgroundColor: 'rgba(31, 41, 55, 0.95)',
-        color: 'rgba(229, 231, 235, 1)',
-        borderColor: 'rgba(55, 65, 81, 1)',
-      }
-    : {
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        color: 'rgba(17, 24, 39, 1)',
-        borderColor: 'rgba(229, 231, 235, 1)',
-      };
+  // ✅ Inline styles so theme ALWAYS updates (no Tailwind getting “stuck”)
+  const panelStyle: React.CSSProperties = {
+    backgroundColor: isDarkMode ? 'rgba(17, 24, 39, 0.92)' : 'rgba(255, 255, 255, 0.92)',
+    color: isDarkMode ? 'rgba(229, 231, 235, 1)' : 'rgba(17, 24, 39, 1)',
+    borderColor: isDarkMode ? 'rgba(55, 65, 81, 1)' : 'rgba(229, 231, 235, 1)',
+    transition: `transform ${ANIM_MS}ms ease-out, opacity ${ANIM_MS}ms ease-out, background-color 220ms ease, color 220ms ease, border-color 220ms ease`,
+  };
 
-  const animClass =
-    phase === 'exit'
-      ? 'opacity-0 translate-y-3 scale-95'
-      : phase === 'enter' || phase === 'shown'
-        ? 'opacity-100 translate-y-0 scale-100'
-        : 'opacity-0 translate-y-2 scale-95';
+  const accentA = hsl(userHue, 90, 55);
+  const accentB = hsl((userHue + 35) % 360, 90, 55);
+
+  const buttonStyle: React.CSSProperties = {
+    backgroundImage: `linear-gradient(90deg, ${accentA}, ${accentB})`,
+    color: 'white',
+  };
+
+  const animClass = closing
+    ? 'opacity-0 translate-y-3 scale-95'
+    : entered
+      ? 'opacity-100 translate-y-0 scale-100'
+      : 'opacity-0 translate-y-2 scale-95';
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] pointer-events-none">
       <div className="pointer-events-auto fixed right-6 bottom-6 w-[calc(100%-3rem)] sm:w-[380px]">
         <div
-          className={[
-            'p-4 rounded-xl shadow-xl backdrop-blur-md border',
-            'transition-all ease-out',
-            animClass,
-          ].join(' ')}
-          style={{
-            ...panelStyle,
-            transitionDuration: `${ANIM_MS}ms`,
-          }}
+          className={`p-4 rounded-xl shadow-xl backdrop-blur-md border ${animClass}`}
+          style={panelStyle}
         >
-          <p className="text-sm mb-3">
-            This website uses cookies to improve your experience.
-          </p>
+          <p className="text-sm mb-3">{tabCopy}</p>
 
           <button
             onClick={accept}
-            className="w-full bg-gradient-to-r from-blue-500 to-teal-500 text-white py-2 rounded-lg font-medium hover:opacity-90 transition"
+            className="w-full py-2 rounded-lg font-medium hover:opacity-90 transition"
+            style={buttonStyle}
           >
             Accept
           </button>
@@ -249,15 +320,23 @@ const CookieBanner = ({ isDarkMode }: { isDarkMode: boolean }) => {
     document.body
   );
 };
+
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
 
+  const [userHue, setUserHue] = useState(200);
+  const uiSound = useUISound();
+
   useEffect(() => {
     const timer = setTimeout(() => setHasLoaded(true), 100);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    setUserHue(getOrCreateUserHue());
   }, []);
 
   const toggleTheme = () => {
@@ -288,23 +367,30 @@ function App() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
-            {navigation.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setCurrentPage(item.id)}
-                className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                  currentPage === item.id
-                    ? isDarkMode
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-blue-500 text-white'
-                    : isDarkMode
-                      ? 'text-gray-300 hover:text-white hover:bg-gray-800'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
+            {navigation.map((item) => {
+              const isHire = item.id === 'contact';
+              return (
+                <button
+                  key={item.id}
+                  onMouseEnter={() => { if (isHire) uiSound.hover(); }}
+                  onClick={() => {
+                    if (isHire) uiSound.click();
+                    setCurrentPage(item.id);
+                  }}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                    currentPage === item.id
+                      ? isDarkMode
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-blue-500 text-white'
+                      : isDarkMode
+                        ? 'text-gray-300 hover:text-white hover:bg-gray-800'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  }`}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
           </nav>
 
           <div className="flex items-center space-x-4">
@@ -337,26 +423,31 @@ function App() {
         {isMenuOpen && (
           <nav className="md:hidden mt-4 pb-4 border-t border-gray-200 dark:border-gray-700">
             <div className="pt-4 space-y-2">
-              {navigation.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setCurrentPage(item.id);
-                    setIsMenuOpen(false);
-                  }}
-                  className={`block w-full text-left px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
-                    currentPage === item.id
-                      ? isDarkMode
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-blue-500 text-white'
-                      : isDarkMode
-                        ? 'text-gray-300 hover:text-white hover:bg-gray-800'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
+              {navigation.map((item) => {
+                const isHire = item.id === 'contact';
+                return (
+                  <button
+                    key={item.id}
+                    onMouseEnter={() => { if (isHire) uiSound.hover(); }}
+                    onClick={() => {
+                      if (isHire) uiSound.click();
+                      setCurrentPage(item.id);
+                      setIsMenuOpen(false);
+                    }}
+                    className={`block w-full text-left px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
+                      currentPage === item.id
+                        ? isDarkMode
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-blue-500 text-white'
+                        : isDarkMode
+                          ? 'text-gray-300 hover:text-white hover:bg-gray-800'
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                );
+              })}
             </div>
           </nav>
         )}
@@ -561,7 +652,11 @@ function App() {
         </div>
 
         <button
-          onClick={() => setCurrentPage('contact')}
+          onMouseEnter={() => uiSound.hover()}
+          onClick={() => {
+            uiSound.click();
+            setCurrentPage('contact');
+          }}
           className="bg-gradient-to-r from-blue-500 to-teal-500 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 hover:shadow-lg hover:scale-105"
         >
           Hire Me
@@ -600,16 +695,12 @@ function App() {
           <p className="text-lg leading-relaxed mb-6">
             What sets me apart is my commitment to making professional-quality editing accessible.
             I believe that great visual content shouldn't break the bank, which is why I offer
-            competitive rates without compromising on quality. Whether you need a quick turnaround
-            for a single project or want to establish a long-term creative partnership, I'm here
-            to help bring your vision to life.
+            competitive rates without compromising on quality.
           </p>
 
           <p className="text-lg leading-relaxed">
             Every project I take on receives the same level of dedication and creative attention.
-            I don't just edit videos, I craft experiences that resonate with your audience and
-            elevate your content above the noise. Let's work together to turn your ideas into
-            stunning visual reality.
+            Let’s work together to turn your ideas into stunning visual reality.
           </p>
         </div>
       </section>
@@ -798,8 +889,7 @@ function App() {
         {renderPage()}
       </main>
 
-      {/* Cookie popup overlay */}
-      <CookieBanner isDarkMode={isDarkMode} />
+      <CookieBanner isDarkMode={isDarkMode} currentPage={currentPage} userHue={userHue} />
 
       <Footer />
     </div>
