@@ -86,7 +86,7 @@ const experienceWorks = {
 
 /* =========================
    UI SOUND (hover/click/tab/popup)
-   - Audio unlock happens after first interaction (browser policy)
+   - Audio unlock after first user interaction (browser policy)
 ========================= */
 function useUISound() {
   const ctxRef = useRef<AudioContext | null>(null);
@@ -147,20 +147,26 @@ function useUISound() {
 
 /* =========================
    COOKIE BANNER
+   - Overlay bottom-right
    - No delay
-   - Pop-in/out animation
-   - Prevents StrictMode double show
-   - Same colors as site theme
+   - Sound on show
+   - Works in StrictMode (no double popup)
+   - Color ALWAYS updates on dark mode toggle (inline styles)
 ========================= */
-const CookieBanner = ({ isDarkMode }: { isDarkMode: boolean }) => {
+const CookieBanner = ({
+  isDarkMode,
+  onPop,
+}: {
+  isDarkMode: boolean;
+  onPop: () => void;
+}) => {
   const [visible, setVisible] = useState(false);
   const [entered, setEntered] = useState(false);
   const [closing, setClosing] = useState(false);
 
   const startedRef = useRef(false);
-  const uiSound = useUISound();
-
   const LS_KEY = 'dv_cookies_accepted';
+  const ANIM_MS = 260;
 
   const hasAccepted = () => {
     try {
@@ -189,7 +195,7 @@ const CookieBanner = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
     setVisible(true);
     requestAnimationFrame(() => setEntered(true));
-    uiSound.pop();
+    onPop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -197,10 +203,10 @@ const CookieBanner = ({ isDarkMode }: { isDarkMode: boolean }) => {
     setClosing(true);
     setEntered(false);
 
-    setTimeout(() => {
+    window.setTimeout(() => {
       saveAccepted();
       setVisible(false);
-    }, 260);
+    }, ANIM_MS);
   };
 
   if (!visible) return null;
@@ -211,25 +217,31 @@ const CookieBanner = ({ isDarkMode }: { isDarkMode: boolean }) => {
       ? 'opacity-100 translate-y-0 scale-100'
       : 'opacity-0 translate-y-2 scale-95';
 
+  const panelStyle: React.CSSProperties = {
+    backgroundColor: isDarkMode ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+    color: isDarkMode ? 'rgb(229, 231, 235)' : 'rgb(31, 41, 55)',
+    borderColor: isDarkMode ? 'rgb(55, 65, 81)' : 'rgb(229, 231, 235)',
+    transition: 'background-color 200ms ease, color 200ms ease, border-color 200ms ease',
+  };
+
+  const buttonStyle: React.CSSProperties = {
+    backgroundImage: 'linear-gradient(90deg, #3b82f6, #14b8a6)',
+    color: 'white',
+  };
+
   return createPortal(
     <div className="fixed inset-0 z-[9999] pointer-events-none">
       <div className="pointer-events-auto fixed right-6 bottom-6 w-[calc(100%-3rem)] sm:w-[380px]">
         <div
-          className={[
-            'p-4 rounded-xl shadow-xl backdrop-blur-md border transition-all duration-300 ease-out',
-            isDarkMode
-              ? 'bg-gray-800/95 text-gray-200 border-gray-700'
-              : 'bg-white/95 text-gray-800 border-gray-200',
-            animClass,
-          ].join(' ')}
+          className={`p-4 rounded-xl shadow-xl backdrop-blur-md border transition-all duration-300 ease-out ${animClass}`}
+          style={panelStyle}
         >
-          <p className="text-sm mb-3">
-            This website uses cookies to improve your experience.
-          </p>
+          <p className="text-sm mb-3">This website uses cookies to improve your experience.</p>
 
           <button
             onClick={accept}
-            className="w-full bg-gradient-to-r from-blue-500 to-teal-500 text-white py-2 rounded-lg font-medium hover:opacity-90 transition"
+            className="w-full py-2 rounded-lg font-medium hover:opacity-90 transition"
+            style={buttonStyle}
           >
             Accept
           </button>
@@ -253,9 +265,7 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+  const toggleTheme = () => setIsDarkMode((v) => !v);
 
   const navigation = [
     { id: 'home' as Page, label: 'Home' },
@@ -330,7 +340,7 @@ function App() {
             <button
               onClick={() => {
                 uiSound.click();
-                setIsMenuOpen(!isMenuOpen);
+                setIsMenuOpen((v) => !v);
               }}
               className={`md:hidden p-2 rounded-lg transition-all duration-200 ${
                 isDarkMode ? 'bg-gray-800 text-gray-300 hover:bg-gray-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -388,7 +398,6 @@ function App() {
     >
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Brand */}
           <div>
             <div className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-teal-500 bg-clip-text text-transparent mb-4">
               DoubleVisuals
@@ -398,7 +407,6 @@ function App() {
             </p>
           </div>
 
-          {/* Navigation */}
           <div>
             <h3 className={`font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Navigation</h3>
             <div className="space-y-2">
@@ -419,7 +427,6 @@ function App() {
             </div>
           </div>
 
-          {/* Socials */}
           <div>
             <h3 className={`font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Connect</h3>
             <div className="flex space-x-4">
@@ -635,10 +642,7 @@ function App() {
           <h2 className={`text-2xl font-bold mb-8 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Shortform Content</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {experienceWorks.shortform.map((work, index) => (
-              <div
-                key={index}
-                className={`rounded-xl overflow-hidden ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}
-              >
+              <div key={index} className={`rounded-xl overflow-hidden ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
                 <VideoEmbed url={work.embed} title={work.title} />
                 <div className="p-4">
                   <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{work.title}</h3>
@@ -652,10 +656,7 @@ function App() {
           <h2 className={`text-2xl font-bold mb-8 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Longform Content</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {experienceWorks.longform.map((work, index) => (
-              <div
-                key={index}
-                className={`rounded-xl overflow-hidden ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}
-              >
+              <div key={index} className={`rounded-xl overflow-hidden ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
                 <VideoEmbed url={work.embed} title={work.title} />
                 <div className="p-4">
                   <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{work.title}</h3>
@@ -669,10 +670,7 @@ function App() {
           <h2 className={`text-2xl font-bold mb-8 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>FN Highlights</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {experienceWorks.highlights.map((work, index) => (
-              <div
-                key={index}
-                className={`rounded-xl overflow-hidden ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}
-              >
+              <div key={index} className={`rounded-xl overflow-hidden ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
                 <VideoEmbed url={work.embed} title={work.title} />
                 <div className="p-4">
                   <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{work.title}</h3>
@@ -688,7 +686,9 @@ function App() {
   const ContactPage = () => (
     <div className="pt-24 pb-16">
       <section className="max-w-4xl mx-auto px-6 py-20 text-center">
-        <h1 className={`text-4xl md:text-5xl font-bold mb-12 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Contact Me</h1>
+        <h1 className={`text-4xl md:text-5xl font-bold mb-12 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+          Contact Me
+        </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           <div
@@ -757,11 +757,10 @@ function App() {
       } ${hasLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
     >
       <Header />
-
       <main className="transition-all duration-300">{renderPage()}</main>
 
-      {/* Cookie popup overlay (no delay) */}
-      <CookieBanner isDarkMode={isDarkMode} />
+      {/* Cookie popup overlay */}
+      <CookieBanner isDarkMode={isDarkMode} onPop={uiSound.pop} />
 
       <Footer />
     </div>
