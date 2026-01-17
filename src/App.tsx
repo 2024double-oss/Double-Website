@@ -728,7 +728,11 @@ function App() {
       </main>
 
       {/* ✅ cookie popup overlay + animation */}
-      <CookieBanner isDarkMode={isDarkMode} />
+      <CookieBanner
+        key={isDarkMode ? 'dark' : 'light'}
+        isDarkMode={isDarkMode}
+    />
+
 
       <Footer />
     </div>
