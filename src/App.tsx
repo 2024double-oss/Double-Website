@@ -21,8 +21,8 @@ const works: VideoWork[] = [
     type: 'Longform'
   },
   {
-    title: "Preview for @FruityINC (Seryx Style)",
-    url: "https://x.com/VisualsByDouble/status/1912659231485964470",
+    title: "Preview for @/FortniteCompetitive (Seryx Style Practice)",
+    url: "https://youtu.be/watch?v=4EUAtuRWlPk",
     type: 'Fortnite Highlight'
   }
 ];
@@ -58,7 +58,7 @@ const experienceWorks = {
       embed: "https://www.youtube.com/watch?v=oVif9j-DyrQ"
     },
     {
-           title: "Επαιξα 1V1 με τον @McpcmStavros...",
+      title: "Επαιξα 1V1 με τον @McpcmStavros...",
       url: "https://www.youtube.com/watch?v=ceCb8VJQLz8",
       embed: "https://www.youtube.com/watch?v=ceCb8VJQLz8"
     },
