@@ -168,6 +168,12 @@ const CookieBanner = ({
   const LS_KEY = 'dv_cookies_accepted';
   const ANIM_MS = 260;
 
+  useEffect(() => {
+  try {
+    localStorage.setItem('dv_dark_mode', String(isDarkMode));
+  } catch {}
+}, [isDarkMode]);
+
   const hasAccepted = () => {
     try {
       if (localStorage.getItem(LS_KEY) === 'true') return true;
