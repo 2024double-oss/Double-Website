@@ -30,9 +30,9 @@ const works: VideoWork[] = [
 const experienceWorks = {
   shortform: [
     {
-      title: "KostisMC - Guess the block MC Reel",
-      url: "https://www.youtube.com/shorts/_Zvr0IVXCd0",
-      embed: "https://www.youtube.com/shorts/_Zvr0IVXCd0"
+      title: "ThriveEsports - Loadout Video",
+      url: "https://www.youtube.com/shorts/hXNxZlzDl7c",
+      embed: "https://www.youtube.com/shorts/hXNxZlzDl7c"
     },
     {
       title: "iiisAndmaniii Short Form Reel",
@@ -40,9 +40,9 @@ const experienceWorks = {
       embed: "https://www.youtube.com/shorts/s97VTmWW8uU"
     },
     {
-      title: "KostisMC - Guess the block",
-      url: "https://www.youtube.com/shorts/mvd-vbKaTaEQ",
-      embed: "https://www.youtube.com/shorts/mvd-vbKaTaE"
+      title: "Southside Roleplay - Minecraft Roleplay Advertisement",
+      url: "https://youtube.com/shorts/RQhwNwBKOSM?si=M3wUb75I2WY77OuA",
+      embed: "https://youtube.com/shorts/RQhwNwBKOSM?si=M3wUb75I2WY77OuA"
     }
   ],
   
