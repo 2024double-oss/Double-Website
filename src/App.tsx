@@ -313,9 +313,6 @@ function App() {
               return (
                 <button
                   key={item.id}
-                  onMouseEnter={() => {
-                    if (isHire) uiSound.hover();
-                  }}
                   onClick={() => {
                     uiSound.tab();
                     if (isHire) uiSound.click();
