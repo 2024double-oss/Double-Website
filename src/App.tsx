@@ -16,9 +16,9 @@ const works: VideoWork[] = [
     type: 'Shortform'
   },
   {
-    title: "Spanos Long Form Video",
-    url: "https://www.youtube.com/watch?v=D-wcfwlx_l0",
-    type: 'Longform'
+title: "Skiourakic Bingo Challenge",
+      url: "https://www.youtube.com/watch?v=oVif9j-DyrQ",
+      embed: "https://www.youtube.com/watch?v=oVif9j-DyrQ"
   },
   {
     title: "Preview for @FruityINC (Seryx Style)",
