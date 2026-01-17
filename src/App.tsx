@@ -69,13 +69,13 @@ const experienceWorks = {
   highlights: [
     {
       title: "Preview for @/FortniteCompetitive (Seryx Style Practice)",
-      url: "https://www.tiktok.com/@double_vfx/video/7593239009996836118",
-      embed: "https://www.tiktok.com/@double_vfx/video/7593239009996836118"
+      url: "https://youtu.be/watch?v=4EUAtuRWlPk",
+      embed: "https://youtu.be/4EUAtuRWlPk"
     },
     {
       title: "Preview for @/FortniteCompetitive (Old-Zerox Style Practice)",
-      url: "https://www.tiktok.com/@double_vfx/video/7562178635965156630",
-      embed: "https://www.tiktok.com/oembed?url=https://www.tiktok.com/@double_vfx/video/7562178635965156630"       
+      url: "https://www.youtube.com/watch?v=GmuX2Q4SbyU",
+      embed: "https://www.youtube.com/watch?v=GmuX2Q4SbyU"       
     },
     {
       title: "Preview for @scoutfnr / @FruityINC (Seryx Style)",
