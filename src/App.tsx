@@ -254,7 +254,15 @@ const CookieBanner = ({
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+  try {
+    const saved = localStorage.getItem('dv_dark_mode');
+    if (saved === 'true') return true;
+    if (saved === 'false') return false;
+  } catch {}
+  return false;
+});
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
 
