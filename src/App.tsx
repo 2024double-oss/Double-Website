@@ -165,11 +165,20 @@ function App() {
     </div>
   );
 
-  const renderPage = () => {
-    if (currentPage === 'experience') return <ExperiencePage />;
-    return <div className="pt-24 text-center text-white">Other pages unchanged</div>;
-  };
-
+const renderPage = () => {
+  switch (currentPage) {
+    case 'home':
+      return <HomePage />;
+    case 'about':
+      return <AboutPage />;
+    case 'experience':
+      return <ExperiencePage />;
+    case 'contact':
+      return <ContactPage />;
+    default:
+      return <HomePage />;
+  }
+};
   return (
     <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
       <header className="fixed top-0 left-0 right-0 bg-gray-900 border-b border-gray-800 z-50">
