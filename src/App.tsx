@@ -266,7 +266,7 @@ function App() {
     if (saved === 'true') return true;
     if (saved === 'false') return false;
   } catch {}
-  return false;
+  return window.matchMedia?.('(prefers-color-scheme: dark)')?.matches ?? false;
 });
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
