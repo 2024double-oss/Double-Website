@@ -89,17 +89,17 @@ const experienceWorks = {
 ========================= */
 const CookieBanner = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const [visible, setVisible] = useState(false);
-  const [entered, setEntered] = useState(false);
-  const [closing, setClosing] = useState(false);
+  const [phase, setPhase] = useState<'hidden' | 'enter' | 'shown' | 'exit'>('hidden');
 
   const DELAY_MS = 900;
+  const ANIM_MS = 280;
 
   const hasAccepted = () => {
     try {
       if (localStorage.getItem('cookiesAccepted') === 'true') return true;
     } catch {}
     if (typeof document !== 'undefined') {
-      return document.cookie.split('; ').some((c) => c.startsWith('dv_cookies_accepted=true'));
+      return document.cookie.includes('dv_cookies_accepted=true');
     }
     return false;
   };
@@ -118,7 +118,10 @@ const CookieBanner = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
     const t = window.setTimeout(() => {
       setVisible(true);
-      requestAnimationFrame(() => setEntered(true));
+      // start from hidden, then pop in next frame
+      requestAnimationFrame(() => setPhase('enter'));
+      // settle into "shown" after animation
+      window.setTimeout(() => setPhase('shown'), ANIM_MS);
     }, DELAY_MS);
 
     return () => window.clearTimeout(t);
@@ -126,34 +129,49 @@ const CookieBanner = ({ isDarkMode }: { isDarkMode: boolean }) => {
   }, []);
 
   const accept = () => {
-    setClosing(true);
-    setEntered(false);
-
-    setTimeout(() => {
+    setPhase('exit');
+    window.setTimeout(() => {
       saveAccepted();
       setVisible(false);
-    }, 260);
+      setPhase('hidden');
+    }, ANIM_MS);
   };
 
   if (!visible) return null;
+
+  // ✅ Inline styles so color ALWAYS updates with dark mode
+  const panelStyle: React.CSSProperties = isDarkMode
+    ? {
+        backgroundColor: 'rgba(31, 41, 55, 0.95)', // gray-800-ish
+        color: 'rgba(229, 231, 235, 1)', // gray-200-ish
+        borderColor: 'rgba(55, 65, 81, 1)', // gray-700-ish
+      }
+    : {
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        color: 'rgba(31, 41, 55, 1)',
+        borderColor: 'rgba(229, 231, 235, 1)',
+      };
+
+  const animClass =
+    phase === 'exit'
+      ? 'opacity-0 translate-y-3 scale-95'
+      : phase === 'enter' || phase === 'shown'
+        ? 'opacity-100 translate-y-0 scale-100'
+        : 'opacity-0 translate-y-2 scale-95';
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] pointer-events-none">
       <div className="pointer-events-auto fixed right-6 bottom-6 w-[calc(100%-3rem)] sm:w-[380px]">
         <div
           className={[
-            "p-4 rounded-xl shadow-xl backdrop-blur-md border",
-            "transition-all duration-300 ease-out",
-            "transition-colors duration-300", // smooth color change on theme toggle
-            isDarkMode
-              ? "bg-gray-800/95 text-gray-200 border-gray-700"
-              : "bg-white/95 text-gray-800 border-gray-200",
-            closing
-              ? "opacity-0 scale-95 translate-y-3"
-              : entered
-                ? "opacity-100 scale-100 translate-y-0"
-                : "opacity-0 scale-95 translate-y-2",
-          ].join(" ")}
+            'p-4 rounded-xl shadow-xl backdrop-blur-md border',
+            'transition-all ease-out',
+            animClass,
+          ].join(' ')}
+          style={{
+            ...panelStyle,
+            transitionDuration: `${ANIM_MS}ms`,
+          }}
         >
           <p className="text-sm mb-3">
             This website uses cookies to improve your experience.
@@ -171,7 +189,6 @@ const CookieBanner = ({ isDarkMode }: { isDarkMode: boolean }) => {
     document.body
   );
 };
-
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [isDarkMode, setIsDarkMode] = useState(false);
