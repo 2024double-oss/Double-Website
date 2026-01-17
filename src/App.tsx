@@ -31,9 +31,76 @@ const getCookie = (name: string) => {
    - Uses a portal so it truly overlays (not stuck at page bottom)
 ========================= */
 const CookieBanner = ({ isDarkMode }: { isDarkMode: boolean }) => {
-  const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [enter, setEnter] = useState(false);
   const [closing, setClosing] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
+
+  // Show once
+  useEffect(() => {
+    const accepted = localStorage.getItem('cookiesAccepted');
+    if (!accepted) {
+      setVisible(true);
+      requestAnimationFrame(() => setEnter(true));
+    }
+  }, []);
+
+  // Parallax scroll (slower than page)
+  useEffect(() => {
+    if (!visible) return;
+
+    const onScroll = () => setScrollY(window.scrollY);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [visible]);
+
+  const acceptCookies = () => {
+    setClosing(true);
+    setEnter(false);
+    setTimeout(() => {
+      localStorage.setItem('cookiesAccepted', 'true');
+      setVisible(false);
+    }, 280);
+  };
+
+  if (!visible) return null;
+
+  // 🔥 Bottom-right positioning + parallax
+  const bottomOffset = 24 - scrollY * 0.2; // moves UP slower than page
+
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        right: 24,
+        bottom: Math.max(bottomOffset, 24),
+        zIndex: 9999,
+        pointerEvents: 'none',
+      }}
+    >
+      <div
+        className={`w-full md:max-w-sm p-4 rounded-xl shadow-xl backdrop-blur-md border transition-all duration-300 ease-out
+          ${isDarkMode ? 'bg-gray-800/95 text-gray-200 border-gray-700' : 'bg-white/95 text-gray-800 border-gray-200'}
+          ${enter && !closing ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4'}
+        `}
+        style={{ pointerEvents: 'auto' }}
+      >
+        <p className="text-sm mb-3">
+          This website uses cookies to improve your experience.
+        </p>
+        <button
+          onClick={acceptCookies}
+          className="w-full bg-gradient-to-r from-blue-500 to-teal-500 text-white py-2 rounded-lg font-medium hover:opacity-90 transition"
+        >
+          Accept
+        </button>
+      </div>
+    </div>
+  );
+};
+
 
   useEffect(() => {
     setMounted(true);
