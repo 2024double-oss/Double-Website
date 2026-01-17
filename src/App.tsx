@@ -179,27 +179,18 @@ function App() {
         return <HomePage />;
     }
   };
-  return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
-      <header className="fixed top-0 left-0 right-0 bg-gray-900 border-b border-gray-800 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div
-            onClick={() => setCurrentPage('home')}
-            className="text-2xl font-bold cursor-pointer bg-gradient-to-r from-blue-500 to-teal-500 bg-clip-text text-transparent"
-          >
-            DoubleVisuals
-          </div>
-
-          <button
-            onClick={() => setIsDarkMode(!isDarkMode)}
-            className="p-2 rounded-lg bg-gray-800 text-yellow-400"
-          >
-            {isDarkMode ? <Sun /> : <Moon />}
-          </button>
-        </div>
-      </header>
-
-      <main>{renderPage()}</main>
+   
+return (
+    <div className={`min-h-screen transition-all duration-300 ${
+      isDarkMode ? 'bg-gray-900' : 'bg-white'
+    } ${
+      hasLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+    }`}>
+      <Header />
+      <main className="transition-all duration-300">
+        {renderPage()}
+      </main>
+      <Footer />
     </div>
   );
 }
