@@ -16,9 +16,10 @@ const works: VideoWork[] = [
     type: 'Shortform'
   },
   {
-      title: "Skiourakic Bingo Challenge",
-      url: "https://www.youtube.com/watch?v=oVif9j-DyrQ",
-      embed: "https://www.youtube.com/watch?v=oVif9j-DyrQ"
+    title: "Skiourakic Bingo Challenge",
+    url: "https://www.youtube.com/watch?v=oVif9j-DyrQ",
+    embed: "https://www.youtube.com/watch?v=oVif9j-DyrQ"
+    type: 'longform'
   },
   {
     title: "Preview for @FruityINC (Seryx Style)",
