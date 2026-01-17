@@ -18,24 +18,30 @@ const getCookie = (name: string) => {
     ?.split('=')[1];
 };
 
+interface VideoWork {
+  title: string;
+  url: string;
+  type: 'shortform' | 'longform' | 'highlights';
+}
+
 /* =======================
    Data
 ======================= */
-const works = [
+const works: VideoWork[] = [
   {
     title: "iiisAndmaniii Short Form Reel",
     url: "https://www.youtube.com/shorts/s97VTmWW8uU",
-    type: "Shortform"
+    type: 'shortform'
   },
   {
     title: "Skiourakic Bingo Challenge",
     url: "https://www.youtube.com/watch?v=oVif9j-DyrQ",
-    type: "Longform"
+    type: 'longform'
   },
   {
     title: "Preview for @/FortniteCompetitive",
-    url: "https://youtu.be/watch?v=4EUAtuRWlPk",
-    type: "Highlight"
+    url: "https://youtu.be/4EUAtuRWlPk",
+    type: 'highlights'
   }
 ];
 
