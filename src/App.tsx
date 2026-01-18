@@ -23,7 +23,7 @@ const works: VideoWork[] = [
   },
   {
     title: "Preview for @/FortniteCompetitive (Seryx Style Practice)",
-    url: "https://youtu.be/watch?v=4EUAtuRWlPk",
+    url: "https://www.youtube.com/watch?v=4EUAtuRWlPk",
     type: 'highlight',
   },
 ];
