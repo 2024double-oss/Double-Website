@@ -17,8 +17,8 @@ const works: VideoWork[] = [
     type: 'shortform',
   },
   {
-    title: "Skiourakic Bingo Challenge",
-    url: "https://www.youtube.com/watch?v=oVif9j-DyrQ",
+    title: "Valify - Higgs 1v1 Video",
+    url: "https://www.youtube.com/watch?v=UQR0iW8d61s",
     type: 'longform',
   },
   {
@@ -49,9 +49,9 @@ const experienceWorks = {
 
   longform: [
     {
-      title: "Valify Video - NOT POSTED YET",
-      url: "https://www.youtube.com/",
-      embed: "https://www.youtube.com/",
+      title: "Valify Video - Higgs 1v1",
+      url: "https://www.youtube.com/watch?v=UQR0iW8d61s",
+      embed: "https://www.youtube.com/watch?v=UQR0iW8d61s",
     },
     {
       title: "Skiourakic Bingo Challenge",
