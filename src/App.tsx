@@ -84,10 +84,9 @@ const experienceWorks = {
   ],
 };
 
-/* =========================
-   UI SOUND (hover/click/tab/popup)
-   - Audio unlock after first user interaction (browser policy)
-========================= */
+/*
+   UI SOUND
+*/
 function useUISound() {
   const ctxRef = useRef<AudioContext | null>(null);
   const unlockedRef = useRef(false);
@@ -145,14 +144,7 @@ function useUISound() {
   };
 }
 
-/* =========================
-   COOKIE BANNER
-   - Overlay bottom-right
-   - No delay
-   - Sound on show
-   - Works in StrictMode (no double popup)
-   - Color ALWAYS updates on dark mode toggle (inline styles)
-========================= */
+/* COOKIE BANNER */
 const CookieBanner = ({
   isDarkMode,
   onPop,
