@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Sun, Moon, Menu, X, Play, Mail, Twitter } from 'lucide-react';
 
+<script async="async" data-cfasync="false" src="https://pl28644889.effectivegatecpm.com/d7f433e73c68f8656472f34afc20b484/invoke.js"></script> <div id="container-d7f433e73c68f8656472f34afc20b484"></div>
+  
 type Page = 'home' | 'about' | 'experience' | 'contact';
 
 interface VideoWork {
@@ -769,6 +771,4 @@ function App() {
     </div>
   );
 }
-<script async="async" data-cfasync="false" src="https://pl28644889.effectivegatecpm.com/d7f433e73c68f8656472f34afc20b484/invoke.js"></script>
-<div id="container-d7f433e73c68f8656472f34afc20b484"></div>
 export default App;
