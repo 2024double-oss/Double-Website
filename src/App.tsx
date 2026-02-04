@@ -769,6 +769,6 @@ function App() {
     </div>
   );
 }
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1552439115801381"
-     crossorigin="anonymous"></script>
+<script async="async" data-cfasync="false" src="https://pl28644889.effectivegatecpm.com/d7f433e73c68f8656472f34afc20b484/invoke.js"></script>
+<div id="container-d7f433e73c68f8656472f34afc20b484"></div>
 export default App;
