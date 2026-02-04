@@ -769,5 +769,6 @@ function App() {
     </div>
   );
 }
-
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1552439115801381"
+     crossorigin="anonymous"></script>
 export default App;
