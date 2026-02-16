@@ -14,8 +14,8 @@ interface VideoWork {
 
 const works: VideoWork[] = [
   {
-    title: "iiisAndmaniii Short Form Reel",
-    url: "https://www.youtube.com/shorts/s97VTmWW8uU",
+    title: "Southside Roleplay - Minecraft Roleplay Advertisement",
+    url: "https://youtube.com/shorts/DkVeqRZoJvM?si=T7bTJRbVlk4H5aGW",
     type: 'shortform',
   },
   {
