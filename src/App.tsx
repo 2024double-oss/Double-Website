@@ -15,12 +15,12 @@ interface VideoWork {
 const works: VideoWork[] = [
   {
     title: "Southside Roleplay - Minecraft Roleplay Advertisement",
-    url: "https://youtube.com/shorts/DkVeqRZoJvM?si=T7bTJRbVlk4H5aGW",
+    url: "https://www.youtube.com/shorts/DkVeqRZoJvM?si=T7bTJRbVlk4H5aGW",
     type: 'shortform',
   },
   {
-    title: "Valify - Higgs 1v1 Video",
-    url: "https://www.youtube.com/watch?v=UQR0iW8d61s",
+    title: "GemiFrap - Horror Video",
+    url: "https://www.youtube.com/watch?v=tS_NRHqcRfA",
     type: 'longform',
   },
   {
@@ -51,9 +51,9 @@ const experienceWorks = {
 
   longform: [
     {
-      title: "Valify Video - Higgs 1v1",
-      url: "https://www.youtube.com/watch?v=UQR0iW8d61s",
-      embed: "https://www.youtube.com/watch?v=UQR0iW8d61s",
+      title: "20v1 Ezgod Minecraft Video",
+      url: "https://www.youtube.com/watch?v=PO94TkzxmnA",
+      embed: "https://www.youtube.com/watch?v=PO94TkzxmnA",
     },
     {
       title: "Skiourakic Bingo Challenge",
@@ -61,9 +61,9 @@ const experienceWorks = {
       embed: "https://www.youtube.com/watch?v=oVif9j-DyrQ",
     },
     {
-      title: "Επαιξα 1V1 με τον @McpcmStavros...",
-      url: "https://www.youtube.com/watch?v=ceCb8VJQLz8",
-      embed: "https://www.youtube.com/watch?v=ceCb8VJQLz8",
+      title: "GemiFrap - Horror Video",
+      url: "https://www.youtube.com/watch?v=tS_NRHqcRfA",
+      embed: "https://www.youtube.com/watch?v=tS_NRHqcRfA",
     },
   ],
 
