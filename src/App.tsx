@@ -41,9 +41,94 @@ const experienceWorks = {
       embed: "https://www.youtube.com/shorts/s97VTmWW8uU",
     },
     {
-      title: "Southside Roleplay - Minecraft Roleplay Advertisement",
+      title: "Southside Roleplay - Minecraft Roleplay Advertisement #1",
       url: "https://youtube.com/shorts/DkVeqRZoJvM?si=T7bTJRbVlk4H5aGW",
       embed: "https://youtube.com/shorts/DkVeqRZoJvM?si=T7bTJRbVlk4H5aGW",
+    },
+    {
+      title: "ThriveEsports - Updates Video",
+      url: "https://www.youtube.com/shorts/Z_VdqGetagc",
+      embed: "https://www.youtube.com/shorts/Z_VdqGetagc",
+    },
+    {
+      title: "ThriveEsports - Updates Video",
+      url: "https://www.youtube.com/shorts/kftvYmYUh38",
+      embed: "https://www.youtube.com/shorts/kftvYmYUh38",
+    },
+    {
+      title: "ThriveEsports - Updates Video",
+      url: "https://www.youtube.com/shorts/YTSMDUtAZXY",
+      embed: "https://www.youtube.com/shorts/YTSMDUtAZXY",
+    },
+    {
+      title: "Southside Roleplay - Minecraft Roleplay Advertisement #2",
+      url: "https://www.youtube.com/shorts/dtnD9yIwja0",
+      embed: "https://www.youtube.com/shorts/dtnD9yIwja0",
+    },
+    {
+      title: "Southside Roleplay - Minecraft Roleplay Advertisement #3",
+      url: "https://www.youtube.com/shorts/RQhwNwBKOSM",
+      embed: "https://www.youtube.com/shorts/RQhwNwBKOSM",
+    },
+    {
+      title: "Southside Roleplay - Minecraft Roleplay Advertisement #4",
+      url: "https://www.youtube.com/shorts/mR7eQPBZ-uk",
+      embed: "https://www.youtube.com/shorts/mR7eQPBZ-uk",
+    },
+    {
+      title: "Southside Roleplay - Minecraft Roleplay Advertisement #5",
+      url: "https://www.youtube.com/shorts/c6xSbKPu2cg",
+      embed: "https://www.youtube.com/shorts/c6xSbKPu2cg",
+    },
+    {
+      title: "Southside Roleplay - Minecraft Roleplay Advertisement #6",
+      url: "https://www.youtube.com/shorts/k63kIS7T2P8",
+      embed: "https://www.youtube.com/shorts/k63kIS7T2P8",
+    },
+    {
+      title: "Southside Roleplay - Minecraft Roleplay Advertisement #7",
+      url: "https://www.youtube.com/shorts/Ag23Ae8-c30",
+      embed: "https://www.youtube.com/shorts/Ag23Ae8-c30",
+    },
+    {
+      title: "Team Zero - Tryout Video #1",
+      url: "https://www.youtube.com/shorts/-4GJAM5Y9x4",
+      embed: "https://www.youtube.com/shorts/-4GJAM5Y9x4",
+    },
+        {
+      title: "Team Zero - Tryout Video #2",
+      url: "https://www.youtube.com/shorts/0WRD0qSXqEo",
+      embed: "https://www.youtube.com/shorts/0WRD0qSXqEo",
+    },
+        {
+      title: "Team Zero - AD Video",
+      url: "https://www.youtube.com/shorts/hGYUhuZvCJ8",
+      embed: "https://www.youtube.com/shorts/hGYUhuZvCJ8",
+    },
+            {
+      title: "Team Zero - Tryout Video #3",
+      url: "https://www.youtube.com/shorts/Qn6Bj6tsbWg",
+      embed: "https://www.youtube.com/shorts/Qn6Bj6tsbWg",
+    },
+                {
+      title: "Kostismc - Minecraft Challenge #1",
+      url: "https://www.youtube.com/shorts/mvd-vbKaTaE",
+      embed: "https://www.youtube.com/shorts/mvd-vbKaTaE",
+    },
+                {
+      title: "Kostismc - Minecraft Challenge #2",
+      url: "https://www.youtube.com/shorts/_Zvr0IVXCd0",
+      embed: "https://www.youtube.com/shorts/_Zvr0IVXCd0",
+    },
+                {
+      title: "Team Zero - Tryout Video #3",
+      url: "https://www.youtube.com/shorts/Qn6Bj6tsbWg",
+      embed: "https://www.youtube.com/shorts/Qn6Bj6tsbWg",
+    },
+                {
+      title: "Fruity eSports - Loadout Trial Short",
+      url: "https://x.com/VisualsByDouble/status/1948354589121474852",
+      embed: "https://x.com/VisualsByDouble/status/1948354589121474852",
     },
   ],
 
