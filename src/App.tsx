@@ -94,9 +94,9 @@ const experienceWorks = {
       embed: "https://www.youtube.com/watch?v=UQR0iW8d61s",
     },
                 {
-      title: "Thrive Setups Video",
-      url: "https://www.youtube.com/watch?v=ObzsfCwwLtQ",
-      embed: "https://www.youtube.com/watch?v=ObzsfCwwLtQ",
+      title: "WLG Sweets Video",
+      url: "https://www.youtube.com/watch?v=WfyZ3FCiblo",
+      embed: "https://www.youtube.com/watch?v=WfyZ3FCiblo",
     },
                     {
       title: "EzGod Herobrine Semi-Horror Video",
