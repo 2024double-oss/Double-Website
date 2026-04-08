@@ -17,8 +17,8 @@ const works: VideoWork[] = [
     type: 'shortform',
   },
   {
-    title: "GemiFrap - Horror Video",
-    url: "https://www.youtube.com/watch?v=tS_NRHqcRfA",
+    title: "GemiFrap - Minecraft Challenge",
+    url: "https://www.youtube.com/watch?v=rrFSCqN4ULI",
     type: 'longform',
   },
   {
@@ -49,9 +49,9 @@ const experienceWorks = {
 
   longform: [
     {
-      title: "20v1 Ezgod Minecraft Video",
-      url: "https://www.youtube.com/watch?v=PO94TkzxmnA",
-      embed: "https://www.youtube.com/watch?v=PO94TkzxmnA",
+      title: "GemiFrap - Minecraft Challenge",
+      url: "https://www.youtube.com/watch?v=rrFSCqN4ULI",
+      embed: "https://www.youtube.com/watch?v=rrFSCqN4ULI",
     },
     {
       title: "Skiourakic Bingo Challenge",
