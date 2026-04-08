@@ -63,6 +63,11 @@ const experienceWorks = {
       url: "https://www.youtube.com/watch?v=tS_NRHqcRfA",
       embed: "https://www.youtube.com/watch?v=tS_NRHqcRfA",
     },
+        {
+      title: "20v1 EzGod Challenge",
+      url: "https://www.youtube.com/watch?v=PO94TkzxmnA",
+      embed: "https://www.youtube.com/watch?v=PO94TkzxmnA",
+    },
   ],
 
   highlights: [
