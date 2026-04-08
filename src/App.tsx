@@ -12,7 +12,7 @@ interface VideoWork {
 
 const works: VideoWork[] = [
   {
-    title: "Southside Roleplay - Minecraft Roleplay Advertisement",
+    title: "Skiourakic Bingo Challenge",
     url: "https://www.youtube.com/watch?v=oVif9j-DyrQ",
     type: 'longform',
   },
@@ -22,8 +22,8 @@ const works: VideoWork[] = [
     type: 'longform',
   },
   {
-    title: "Preview for @/FortniteCompetitive (Seryx Style Practice)",
-    url: "https://www.youtube.com/watch?v=rrFSCqN4ULI",
+    title: "GemiFrap - Horror Video",
+    url: "https://www.youtube.com/watch?v=tS_NRHqcRfA",
     type: 'longform',
   },
 ];
