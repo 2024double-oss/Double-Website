@@ -13,8 +13,8 @@ interface VideoWork {
 const works: VideoWork[] = [
   {
     title: "Southside Roleplay - Minecraft Roleplay Advertisement",
-    url: "https://www.youtube.com/shorts/DkVeqRZoJvM?si=T7bTJRbVlk4H5aGW",
-    type: 'shortform',
+    url: "https://www.youtube.com/watch?v=oVif9j-DyrQ",
+    type: 'longform',
   },
   {
     title: "GemiFrap - Minecraft Challenge",
@@ -23,8 +23,8 @@ const works: VideoWork[] = [
   },
   {
     title: "Preview for @/FortniteCompetitive (Seryx Style Practice)",
-    url: "https://www.youtube.com/watch?v=4EUAtuRWlPk",
-    type: 'highlight',
+    url: "https://www.youtube.com/watch?v=rrFSCqN4ULI",
+    type: 'longform',
   },
 ];
 
