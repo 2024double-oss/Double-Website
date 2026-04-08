@@ -68,6 +68,46 @@ const experienceWorks = {
       url: "https://www.youtube.com/watch?v=PO94TkzxmnA",
       embed: "https://www.youtube.com/watch?v=PO94TkzxmnA",
     },
+            {
+      title: "EzGod 1v1 Challenge",
+      url: "https://www.youtube.com/watch?v=ceCb8VJQLz8",
+      embed: "https://www.youtube.com/watch?v=ceCb8VJQLz8",
+    },
+            {
+      title: "Fake Clothes Skiourakic",
+      url: "https://www.youtube.com/watch?v=ywMsy42NkpE",
+      embed: "https://www.youtube.com/watch?v=ywMsy42NkpE",
+    },
+            {
+      title: "Spanos OmeTV Challenge",
+      url: "https://www.youtube.com/watch?v=D-wcfwlx_l0",
+      embed: "https://www.youtube.com/watch?v=D-wcfwlx_l0",
+    },
+           {
+      title: "Thrive Setups Video",
+      url: "https://www.youtube.com/watch?v=ObzsfCwwLtQ",
+      embed: "https://www.youtube.com/watch?v=ObzsfCwwLtQ",
+    },
+               {
+      title: "Valify vs Higgz Video",
+      url: "https://www.youtube.com/watch?v=UQR0iW8d61s",
+      embed: "https://www.youtube.com/watch?v=UQR0iW8d61s",
+    },
+                {
+      title: "Thrive Setups Video",
+      url: "https://www.youtube.com/watch?v=ObzsfCwwLtQ",
+      embed: "https://www.youtube.com/watch?v=ObzsfCwwLtQ",
+    },
+                    {
+      title: "EzGod Herobrine Semi-Horror Video",
+      url: "https://www.youtube.com/watch?v=0a7btRnqzuc",
+      embed: "https://www.youtube.com/watch?v=0a7btRnqzuc",
+    },
+                    {
+      title: "Metal Tradition Video",
+      url: "https://www.youtube.com/watch?v=RJ6fQM9NUSc",
+      embed: "https://www.youtube.com/watch?v=RJ6fQM9NUSc",
+    },
   ],
 
   highlights: [
