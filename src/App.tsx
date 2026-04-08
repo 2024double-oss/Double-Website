@@ -105,11 +105,6 @@ const experienceWorks = {
       url: "https://www.youtube.com/shorts/hGYUhuZvCJ8",
       embed: "https://www.youtube.com/shorts/hGYUhuZvCJ8",
     },
-            {
-      title: "Team Zero - Tryout Video #3",
-      url: "https://www.youtube.com/shorts/Qn6Bj6tsbWg",
-      embed: "https://www.youtube.com/shorts/Qn6Bj6tsbWg",
-    },
                 {
       title: "Kostismc - Minecraft Challenge #1",
       url: "https://www.youtube.com/shorts/mvd-vbKaTaE",
