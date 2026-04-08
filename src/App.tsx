@@ -192,6 +192,11 @@ const experienceWorks = {
 
   highlights: [
     {
+      title: "Thrive Esports - Alexsir Welcome Montage",
+      url: "https://www.youtube.com/watch?v=4Sz-zZ1RXnM",
+      embed: "https://www.youtube.com/watch?v=4Sz-zZ1RXnM",
+    },
+    {
       title: "Preview for @/FortniteCompetitive (Seryx Style Practice)",
       url: "https://www.youtube.com/watch?v=4EUAtuRWlPk",
       embed: "https://www.youtube.com/watch?v=4EUAtuRWlPk",
